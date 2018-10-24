@@ -56,14 +56,14 @@ namespace StarWars.Data
 
         public IEnumerable<object> Search(string text)
         {
-            foreach(ICharacter character in _characters.Values
+            foreach (ICharacter character in _characters.Values
                 .Where(t => t.Name.Contains(text,
                     StringComparison.OrdinalIgnoreCase)))
             {
                 yield return character;
             }
 
-            foreach(Starship starship in _starships.Values
+            foreach (Starship starship in _starships.Values
                 .Where(t => t.Name.Contains(text,
                     StringComparison.OrdinalIgnoreCase)))
             {

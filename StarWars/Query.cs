@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using HotChocolate.Execution;
 using HotChocolate.Resolvers;
-using Microsoft.AspNetCore.Http;
 using StarWars.Data;
 using StarWars.Models;
 
@@ -15,42 +13,40 @@ namespace StarWars
         public Query(CharacterRepository repository)
         {
             _repository = repository
-                ?? throw new System.ArgumentNullException(nameof(repository));
+                ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public ICharacter GetHero(
-            IResolverContext resolverContext,
-            Episode episode)
+        public ICharacter GetHero(Episode episode)
         {
-            var context = resolverContext.Service<HttpContext>();
-
-            if (context == null)
-            {
-                throw new QueryException(new QueryError("Can't inject HttpContext!"));
-            }
-
             return _repository.GetHero(episode);
         }
 
-        public Human GetHuman(
-            IResolverContext resolverContext,
-            string id)
+        public Human GetHuman(string id)
         {
-            try
-            {
-                var scoped = resolverContext.Service<ScopedService>();
-            }
-            catch (Exception ex)
-            {
-                throw new QueryException(new QueryError(ex.Message));
-            }
-
             return _repository.GetHuman(id);
         }
 
         public Droid GetDroid(string id)
         {
             return _repository.GetDroid(id);
+        }
+
+        public IEnumerable<ICharacter> GetCharacter(string[] characterIds, IResolverContext context)
+        {
+            foreach (string characterId in characterIds)
+            {
+                ICharacter character = _repository.GetCharacter(characterId);
+                if (character == null)
+                {
+                    context.ReportError(
+                        "Could not resolve a charachter for the " +
+                        $"character-id {characterId}.");
+                }
+                else
+                {
+                    yield return character;
+                }
+            }
         }
 
         public IEnumerable<object> Search(string text)

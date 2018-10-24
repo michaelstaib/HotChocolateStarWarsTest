@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HotChocolate;
+using HotChocolate.Subscriptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StarWars.Data;
+using StarWars.Directives;
 using StarWars.Types;
 
 namespace StarWars
@@ -18,22 +20,35 @@ namespace StarWars
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<ScopedService>();
-
             // Add the custom services like repositories etc ...
             services.AddSingleton<CharacterRepository>();
+            services.AddSingleton<ReviewRepository>();
+
             services.AddSingleton<Query>();
             services.AddSingleton<Mutation>();
+            services.AddSingleton<Subscription>();
+
+            // Add in-memory event provider
+            var eventRegistry = new InMemoryEventRegistry();
+            services.AddSingleton<IEventRegistry>(eventRegistry);
+            services.AddSingleton<IEventSender>(eventRegistry);
 
             // Add GraphQL Services
-            services.AddGraphQL(c =>
+            services.AddGraphQL(sp => Schema.Create(c =>
             {
+                c.RegisterServiceProvider(sp);
+
                 c.RegisterQueryType<QueryType>();
                 c.RegisterMutationType<MutationType>();
+                c.RegisterSubscriptionType<SubscriptionType>();
+
+                c.RegisterDirective<ArgumentValidationDirectiveType>();
+                //c.RegisterDirective<ExecuteArgumentValidationDirectiveType>();
+
                 c.RegisterType<HumanType>();
                 c.RegisterType<DroidType>();
                 c.RegisterType<EpisodeType>();
-            });
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +58,8 @@ namespace StarWars
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseWebSockets();
             app.UseGraphQL();
         }
     }

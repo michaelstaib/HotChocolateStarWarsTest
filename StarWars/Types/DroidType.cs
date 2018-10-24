@@ -1,5 +1,6 @@
 using HotChocolate.Types;
 using StarWars.Models;
+using StarWars.Resolvers;
 
 namespace StarWars.Types
 {
@@ -10,13 +11,20 @@ namespace StarWars.Types
         {
             descriptor.Interface<CharacterType>();
 
-            descriptor.Field(t => t.Friends)
-                .Type<ListType<CharacterType>>()
-                .Resolver(c => CharacterType.GetCharacter(c));
+            descriptor.Field(t => t.Id)
+                .Type<NonNullType<IdType>>();
 
-            descriptor.Field(t => t.Height)
+            descriptor.Field(t => t.AppearsIn)
+                .Type<ListType<EpisodeType>>();
+
+            descriptor.Field<SharedResolvers>(r => r.GetCharacter(default, default))
+                .Type<ListType<CharacterType>>()
+                .Name("friends");
+
+            descriptor.Field<SharedResolvers>(t => t.GetHeight(default, default))
+                .Type<FloatType>()
                 .Argument("unit", a => a.Type<EnumType<Unit>>())
-                .Resolver(c => CharacterType.GetHeight(c));
+                .Name("height");
         }
     }
 }

@@ -7,5 +7,4 @@ namespace StarWars.Types
         : EnumType<Episode>
     {
     }
-
 }
