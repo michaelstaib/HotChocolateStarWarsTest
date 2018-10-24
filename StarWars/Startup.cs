@@ -43,7 +43,7 @@ namespace StarWars
                 c.RegisterSubscriptionType<SubscriptionType>();
 
                 c.RegisterDirective<ArgumentValidationDirectiveType>();
-                //c.RegisterDirective<ExecuteArgumentValidationDirectiveType>();
+                c.RegisterDirective<ExecuteArgumentValidationDirectiveType>();
 
                 c.RegisterType<HumanType>();
                 c.RegisterType<DroidType>();
