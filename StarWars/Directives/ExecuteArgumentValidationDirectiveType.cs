@@ -3,9 +3,9 @@ using HotChocolate.Types;
 namespace StarWars.Directives
 {
     public class ExecuteArgumentValidationDirectiveType
-        : DirectiveType
+        : DirectiveType<ArgumentValidation>
     {
-        protected override void Configure(IDirectiveTypeDescriptor descriptor)
+        protected override void Configure(IDirectiveTypeDescriptor<ArgumentValidation> descriptor)
         {
             descriptor.Name("executeValidation");
             descriptor.Location(DirectiveLocation.Object);

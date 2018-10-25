@@ -9,7 +9,7 @@ namespace StarWars.Types
     {
         protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
         {
-            descriptor.Directive("executeValidation");
+            descriptor.Directive<ArgumentValidation>();
 
             descriptor.Field(t => t.GetHero(default))
                 .Type<CharacterType>()
