@@ -21,7 +21,9 @@ namespace StarWars.Directives
 
                 if (!isValid)
                 {
-                    throw new QueryException(new ArgumentError("Argument is not valid.", ((InputField)d.Source).Name, n));
+                    throw new QueryException(new ArgumentError(
+                        "Argument is not valid.",
+                        ((InputField)d.Source).Name, n));
                 }
             }
 

@@ -1,4 +1,5 @@
 using HotChocolate.Types;
+using StarWars.Directives;
 using StarWars.Models;
 
 namespace StarWars.Types
@@ -9,7 +10,7 @@ namespace StarWars.Types
         protected override void Configure(IObjectTypeDescriptor<Query> descriptor)
         {
             descriptor.Directive("executeValidation");
-            
+
             descriptor.Field(t => t.GetHero(default))
                 .Type<CharacterType>()
                 .Argument("episode", a => a.DefaultValue(Episode.NewHope));
@@ -18,7 +19,9 @@ namespace StarWars.Types
                 .Type<NonNullType<ListType<NonNullType<CharacterType>>>>();
 
             descriptor.Field(t => t.Search(default))
-                .Type<ListType<SearchResultType>>();
+                .Type<ListType<SearchResultType>>()
+                .Argument("text", t => t.Type<NonNullType<StringType>>()
+                    .Validate<string>(s => !string.IsNullOrEmpty(s)));
         }
     }
 

@@ -10,7 +10,7 @@ namespace StarWars.Directives
             descriptor.Name("executeValidation");
             descriptor.Location(DirectiveLocation.Object);
             descriptor.Middleware<ExecuteArgumentValidationMiddleware>(
-                t => t.Validate(default));
+                t => t.ValidateAsync(default));
         }
     }
 }
